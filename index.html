@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AgroManage — Farm Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Firebase SDKs -->
+  <script type="module" src="app.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">AgroManage Pro</div>
+      <nav>
+        <button data-view="dashboard" class="active">Dashboard</button>
+        <button data-view="expenses">Expenses</button>
+        <button data-view="eggs">Egg Records</button>
+        <button data-view="feed">Feed Consumption</button>
+        <button data-view="attendance">Attendance</button>
+        <button data-view="employees">Employees</button>
+        <button data-view="mortality">Mortality</button>
+        <button data-view="reports">Reports</button>
+        <button id="logoutBtn">Logout</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>Logged in as: <span id="currentUser">—</span></div>
+      </header>
+
+      <section id="content">
+        <!-- Dashboard -->
+        <div id="view-dashboard" class="view active">
+          <div class="cards">
+            <div class="card">
+              <div class="card-title">Today's Expenses</div>
+              <div id="kpi-expense" class="card-value">0</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Eggs Collected Today</div>
+              <div id="kpi-eggs" class="card-value">0</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Mortality Today</div>
+              <div id="kpi-mortality" class="card-value">0</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Staff Present</div>
+              <div id="kpi-staff" class="card-value">0/0</div>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Expenses -->
+        <div id="view-expenses" class="view">
+          <h2>Expenses</h2>
+          <form id="form-expense" class="form-inline">
+            <input name="date" type="date" required />
+            <select name="category">
+              <option>Feed</option><option>Medicine</option><option>Labor</option><option>Electricity</option><option>Other</option>
+            </select>
+            <input name="amount" type="number" placeholder="Amount" required />
+            <input name="notes" placeholder="Notes" />
+            <button type="submit">Add Expense</button>
+          </form>
+          <table id="table-expenses" class="table"></table>
+        </div>
+
+        <!-- Eggs -->
+        <div id="view-eggs" class="view">
+          <h2>Egg Records</h2>
+          <form id="form-eggs" class="form-inline">
+            <input name="date" type="date" required />
+            <select name="shed">
+              <option>Shed A</option><option>Shed B</option><option>Shed C</option>
+            </select>
+            <input name="collected" type="number" placeholder="Collected" required />
+            <input name="broken" type="number" placeholder="Broken" />
+            <button type="submit">Record Eggs</button>
+          </form>
+          <table id="table-eggs" class="table"></table>
+        </div>
+
+        <!-- Feed -->
+        <div id="view-feed" class="view">
+          <h2>Feed Consumption</h2>
+          <form id="form-feed" class="form-inline">
+            <input name="date" type="date" required />
+            <select name="shed">
+              <option>Shed A</option><option>Shed B</option><option>Shed C</option>
+            </select>
+            <input name="kg" type="number" placeholder="Kg used" required />
+            <button type="submit">Record Feed</button>
+          </form>
+          <table id="table-feed" class="table"></table>
+        </div>
+
+        <!-- Attendance -->
+        <div id="view-attendance" class="view">
+          <h2>Attendance</h2>
+          <form id="form-att" class="form-inline">
+            <input name="date" type="date" required />
+            <select name="employee" id="att-employee"></select>
+            <select name="status">
+              <option>Present</option><option>Absent</option><option>Leave</option>
+            </select>
+            <button type="submit">Mark</button>
+          </form>
+          <table id="table-att" class="table"></table>
+        </div>
+
+        <!-- Employees -->
+        <div id="view-employees" class="view">
+          <h2>Employees</h2>
+          <form id="form-emp" class="form-inline">
+            <input name="name" placeholder="Name" required />
+            <input name="phone" placeholder="Phone" />
+            <select name="role"><option>Egg Team</option><option>Feed Operator</option><option>Vet</option><option>Sales</option></select>
+            <button type="submit">Add Employee</button>
+          </form>
+          <table id="table-emp" class="table"></table>
+        </div>
+
+        <!-- Mortality -->
+        <div id="view-mortality" class="view">
+          <h2>Mortality</h2>
+          <form id="form-mort" class="form-inline">
+            <input name="date" type="date" required />
+            <select name="shed"><option>Shed A</option><option>Shed B</option></select>
+            <input name="count" type="number" placeholder="Count" required />
+            <input name="reason" placeholder="Reason" />
+            <button type="submit">Report</button>
+          </form>
+          <table id="table-mort" class="table"></table>
+        </div>
+
+        <!-- Reports -->
+        <div id="view-reports" class="view">
+          <h2>Reports</h2>
+          <button id="btn-export-expenses">Export Expenses CSV</button>
+          <button id="btn-export-eggs">Export Egg CSV</button>
+          <div id="report-area"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Simple modal or notifications -->
+  <div id="toast" class="toast"></div>
+</body>
+</html>
