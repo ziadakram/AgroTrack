@@ -1,158 +1,187 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AgroManage — Farm Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDKs -->
-  <script type="module" src="app.js" defer></script>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+    body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        background: #f4f7fa;
+    }
+
+    /* Top Navigation */
+    .navbar {
+        background: #1a73e8;
+        padding: 12px 20px;
+        display: flex;
+        gap: 20px;
+        color: white;
+    }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+    .navbar a:hover {
+        background: #0b57d0;
+    }
+
+    /* Layout */
+    .container {
+        padding: 25px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    /* Cards */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .card h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #333;
+    }
+    .card p {
+        font-size: 24px;
+        margin-top: 8px;
+        font-weight: bold;
+        color: #1a73e8;
+    }
+
+    /* Section Boxes */
+    section {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    }
+    section h2 {
+        margin-top: 0;
+        color: #1a73e8;
+    }
+
+    /* Form Styles */
+    input, select, button {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+    button {
+        background: #1a73e8;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    button:hover {
+        background: #0b57d0;
+    }
+</style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">AgroManage Pro</div>
-      <nav>
-        <button data-view="dashboard" class="active">Dashboard</button>
-        <button data-view="expenses">Expenses</button>
-        <button data-view="eggs">Egg Records</button>
-        <button data-view="feed">Feed Consumption</button>
-        <button data-view="attendance">Attendance</button>
-        <button data-view="employees">Employees</button>
-        <button data-view="mortality">Mortality</button>
-        <button data-view="reports">Reports</button>
-        <button id="logoutBtn">Logout</button>
-      </nav>
-    </aside>
 
-    <main class="main">
-      <header class="topbar">
-        <div>Logged in as: <span id="currentUser">—</span></div>
-      </header>
+<div class="navbar">
+    <a href="#dashboard"><i class="fa fa-home"></i> Dashboard</a>
+    <a href="#expenses">Expenses</a>
+    <a href="#eggs">Egg Records</a>
+    <a href="#feed">Feed Consumption</a>
+    <a href="#attendance">Attendance</a>
+    <a href="#employees">Employees</a>
+    <a href="#mortality">Mortality</a>
+    <a href="#reports">Reports</a>
+    <a href="#logout">Logout</a>
+</div>
 
-      <section id="content">
-        <!-- Dashboard -->
-        <div id="view-dashboard" class="view active">
-          <div class="cards">
-            <div class="card">
-              <div class="card-title">Today's Expenses</div>
-              <div id="kpi-expense" class="card-value">0</div>
-            </div>
-            <div class="card">
-              <div class="card-title">Eggs Collected Today</div>
-              <div id="kpi-eggs" class="card-value">0</div>
-            </div>
-            <div class="card">
-              <div class="card-title">Mortality Today</div>
-              <div id="kpi-mortality" class="card-value">0</div>
-            </div>
-            <div class="card">
-              <div class="card-title">Staff Present</div>
-              <div id="kpi-staff" class="card-value">0/0</div>
-            </div>
-          </div>
+<div class="container">
 
-          <div class="chart-container">
-            <canvas id="weeklyChart"></canvas>
-          </div>
+    <!-- Dashboard Cards -->
+    <div class="card-grid">
+        <div class="card">
+            <h3>Today's Expenses</h3>
+            <p id="today-exp">0</p>
         </div>
-
-        <!-- Expenses -->
-        <div id="view-expenses" class="view">
-          <h2>Expenses</h2>
-          <form id="form-expense" class="form-inline">
-            <input name="date" type="date" required />
-            <select name="category">
-              <option>Feed</option><option>Medicine</option><option>Labor</option><option>Electricity</option><option>Other</option>
-            </select>
-            <input name="amount" type="number" placeholder="Amount" required />
-            <input name="notes" placeholder="Notes" />
-            <button type="submit">Add Expense</button>
-          </form>
-          <table id="table-expenses" class="table"></table>
+        <div class="card">
+            <h3>Eggs Collected Today</h3>
+            <p id="today-eggs">0</p>
         </div>
-
-        <!-- Eggs -->
-        <div id="view-eggs" class="view">
-          <h2>Egg Records</h2>
-          <form id="form-eggs" class="form-inline">
-            <input name="date" type="date" required />
-            <select name="shed">
-              <option>Shed A</option><option>Shed B</option><option>Shed C</option>
-            </select>
-            <input name="collected" type="number" placeholder="Collected" required />
-            <input name="broken" type="number" placeholder="Broken" />
-            <button type="submit">Record Eggs</button>
-          </form>
-          <table id="table-eggs" class="table"></table>
+        <div class="card">
+            <h3>Mortalities Today</h3>
+            <p id="today-mortality">0</p>
         </div>
-
-        <!-- Feed -->
-        <div id="view-feed" class="view">
-          <h2>Feed Consumption</h2>
-          <form id="form-feed" class="form-inline">
-            <input name="date" type="date" required />
-            <select name="shed">
-              <option>Shed A</option><option>Shed B</option><option>Shed C</option>
-            </select>
-            <input name="kg" type="number" placeholder="Kg used" required />
-            <button type="submit">Record Feed</button>
-          </form>
-          <table id="table-feed" class="table"></table>
+        <div class="card">
+            <h3>Staff Present</h3>
+            <p id="staff-present">0/0</p>
         </div>
+    </div>
 
-        <!-- Attendance -->
-        <div id="view-attendance" class="view">
-          <h2>Attendance</h2>
-          <form id="form-att" class="form-inline">
-            <input name="date" type="date" required />
-            <select name="employee" id="att-employee"></select>
-            <select name="status">
-              <option>Present</option><option>Absent</option><option>Leave</option>
-            </select>
-            <button type="submit">Mark</button>
-          </form>
-          <table id="table-att" class="table"></table>
-        </div>
+    <!-- Expenses Section -->
+    <section id="expenses">
+        <h2>Expenses</h2>
+        <input type="date">
+        <select>
+            <option>Feed</option>
+            <option>Medicine</option>
+            <option>Maintenance</option>
+        </select>
+        <input type="number" placeholder="Amount">
+        <input type="text" placeholder="Notes">
+        <button>Add Expense</button>
+    </section>
 
-        <!-- Employees -->
-        <div id="view-employees" class="view">
-          <h2>Employees</h2>
-          <form id="form-emp" class="form-inline">
-            <input name="name" placeholder="Name" required />
-            <input name="phone" placeholder="Phone" />
-            <select name="role"><option>Egg Team</option><option>Feed Operator</option><option>Vet</option><option>Sales</option></select>
-            <button type="submit">Add Employee</button>
-          </form>
-          <table id="table-emp" class="table"></table>
-        </div>
+    <!-- Eggs Section -->
+    <section id="eggs">
+        <h2>Egg Records</h2>
+        <input type="date">
+        <select>
+            <option>Shed A</option>
+            <option>Shed B</option>
+        </select>
+        <input type="number" placeholder="Collected">
+        <input type="number" placeholder="Broken">
+        <button>Record Eggs</button>
+    </section>
 
-        <!-- Mortality -->
-        <div id="view-mortality" class="view">
-          <h2>Mortality</h2>
-          <form id="form-mort" class="form-inline">
-            <input name="date" type="date" required />
-            <select name="shed"><option>Shed A</option><option>Shed B</option></select>
-            <input name="count" type="number" placeholder="Count" required />
-            <input name="reason" placeholder="Reason" />
-            <button type="submit">Report</button>
-          </form>
-          <table id="table-mort" class="table"></table>
-        </div>
+    <!-- Feed Section -->
+    <section id="feed">
+        <h2>Feed Consumption</h2>
+        <input type="date">
+        <select>
+            <option>Shed A</option>
+            <option>Shed B</option>
+        </select>
+        <input type="number" placeholder="Kg Used">
+        <button>Record Feed</button>
+    </section>
 
-        <!-- Reports -->
-        <div id="view-reports" class="view">
-          <h2>Reports</h2>
-          <button id="btn-export-expenses">Export Expenses CSV</button>
-          <button id="btn-export-eggs">Export Egg CSV</button>
-          <div id="report-area"></div>
-        </div>
-      </section>
-    </main>
-  </div>
+    <!-- Attendance Section -->
+    <section id="attendance">
+        <h2>Attendance</h2>
+        <input type="date">
+        <input type="text" placeholder="Employee Name">
+        <select>
+            <option>Present</option>
+            <option>Absent</option>
+        </select>
+        <button>Mark Attendance</button>
+    </section>
 
-  <!-- Simple modal or notifications -->
-  <div id="toast" class="toast"></div>
+</div>
+
 </body>
 </html>
+
